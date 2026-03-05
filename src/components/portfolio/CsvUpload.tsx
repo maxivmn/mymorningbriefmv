@@ -126,7 +126,7 @@ export function CsvUpload({ onUploadComplete }: { onUploadComplete?: () => void 
       }
 
       const positions: ParsedPosition[] = rows
-        .filter((r) => r.ticker && parseLocalizedNumber(r.position_value_eur) > 0)
+        .filter((r) => r.ticker?.trim())
         .map((r) => {
           const value = parseLocalizedNumber(r.position_value_eur);
           const qty = parseLocalizedNumber(r.quantity);
@@ -147,7 +147,7 @@ export function CsvUpload({ onUploadComplete }: { onUploadComplete?: () => void 
             is_top40: false,
           };
         })
-        .sort((a, b) => b.portfolio_weight - a.portfolio_weight);
+        .sort((a, b) => b.position_value - a.position_value);
 
       // Mark top 40
       positions.forEach((p, i) => {
