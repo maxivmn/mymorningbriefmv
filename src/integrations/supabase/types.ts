@@ -92,12 +92,18 @@ export type Database = {
         Row: {
           company_name: string
           created_at: string
+          currency: string | null
           id: string
+          is_top40: boolean | null
+          isin: string | null
           notes: string | null
           portfolio_weight: number
           position_value: number
+          price_date: string | null
+          price_per_unit: number | null
           purchase_date: string | null
           sector: string
+          security_type: string | null
           shares: number
           ticker: string
           updated_at: string
@@ -105,12 +111,18 @@ export type Database = {
         Insert: {
           company_name: string
           created_at?: string
+          currency?: string | null
           id?: string
+          is_top40?: boolean | null
+          isin?: string | null
           notes?: string | null
           portfolio_weight?: number
           position_value?: number
+          price_date?: string | null
+          price_per_unit?: number | null
           purchase_date?: string | null
           sector?: string
+          security_type?: string | null
           shares?: number
           ticker: string
           updated_at?: string
@@ -118,12 +130,18 @@ export type Database = {
         Update: {
           company_name?: string
           created_at?: string
+          currency?: string | null
           id?: string
+          is_top40?: boolean | null
+          isin?: string | null
           notes?: string | null
           portfolio_weight?: number
           position_value?: number
+          price_date?: string | null
+          price_per_unit?: number | null
           purchase_date?: string | null
           sector?: string
+          security_type?: string | null
           shares?: number
           ticker?: string
           updated_at?: string

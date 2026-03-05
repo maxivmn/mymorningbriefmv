@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,9 +8,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Search, Upload, TrendingUp, TrendingDown, ArrowUpDown } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Plus, Search, Upload, TrendingUp, TrendingDown, ArrowUpDown, FileSpreadsheet } from "lucide-react";
 import { mockPositions, totalPortfolioValue, type PortfolioPosition } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { CsvUpload } from "@/components/portfolio/CsvUpload";
 
 type SortKey = 'ticker' | 'positionValue' | 'portfolioWeight' | 'dailyChangePercent' | 'sector';
 
@@ -68,6 +70,20 @@ export default function Portfolio() {
           <p className="text-sm text-muted-foreground">{positions.length} positions · ${(totalPortfolioValue / 1000).toFixed(0)}k total</p>
         </div>
         <div className="flex gap-2">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2">
+                <FileSpreadsheet className="h-3.5 w-3.5" />
+                Import CSV
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-auto">
+              <DialogHeader>
+                <DialogTitle>Import Portfolio CSV</DialogTitle>
+              </DialogHeader>
+              <CsvUpload onUploadComplete={() => window.location.reload()} />
+            </DialogContent>
+          </Dialog>
           <Button variant="outline" size="sm" className="gap-2">
             <Upload className="h-3.5 w-3.5" />
             Import PDF
