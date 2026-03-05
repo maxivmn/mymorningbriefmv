@@ -37,11 +37,30 @@ interface ParsedPosition {
   is_top40: boolean;
 }
 
+function parseLocalizedNumber(value: string): number {
+  if (!value || value.trim() === "") return 0;
+  let str = value.trim().replace(/[€$£¥\s]/g, "");
+
+  // Auto-detect: if last separator is comma and there's a dot before it, comma is decimal
+  const lastComma = str.lastIndexOf(",");
+  const lastDot = str.lastIndexOf(".");
+
+  if (lastComma > lastDot && lastComma !== -1) {
+    // European: 1.234,56
+    str = str.replace(/\./g, "").replace(",", ".");
+  } else {
+    // US: 1,234.56
+    str = str.replace(/,/g, "");
+  }
+
+  const parsed = parseFloat(str);
+  return isNaN(parsed) ? 0 : parsed;
+}
+
 function parseCsv(text: string): CsvRow[] {
-  const lines = text.trim().split("\n");
+  const lines = text.trim().split("\n").filter((l) => l.trim().length > 0);
   if (lines.length < 2) return [];
 
-  // Detect delimiter: semicolon or comma
   const headerLine = lines[0];
   const delimiter = headerLine.includes(";") ? ";" : ",";
 
@@ -72,6 +91,7 @@ export function CsvUpload({ onUploadComplete }: { onUploadComplete?: () => void 
   const [status, setStatus] = useState<"idle" | "parsing" | "uploading" | "done" | "error">("idle");
   const [preview, setPreview] = useState<ParsedPosition[]>([]);
   const [errorMsg, setErrorMsg] = useState("");
+  const [debugRows, setDebugRows] = useState<{ ticker: string; raw_quantity: string; parsed_quantity: number; raw_value: string; parsed_value: number }[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const processFile = async (file: File) => {
@@ -95,20 +115,30 @@ export function CsvUpload({ onUploadComplete }: { onUploadComplete?: () => void 
         return;
       }
 
-      const totalValue = rows.reduce((sum, r) => sum + (parseFloat(r.position_value_eur) || 0), 0);
+      const totalValue = rows.reduce((sum, r) => sum + parseLocalizedNumber(r.position_value_eur), 0);
+
+      // Validation: check if position_value_eur is missing/zero for most rows
+      const zeroValueCount = rows.filter((r) => parseLocalizedNumber(r.position_value_eur) <= 0).length;
+      if (zeroValueCount > rows.length * 0.5) {
+        setErrorMsg(`position_value_eur is missing or ≤ 0 for ${zeroValueCount}/${rows.length} rows. Check CSV column mapping.`);
+        setStatus("error");
+        return;
+      }
 
       const positions: ParsedPosition[] = rows
-        .filter((r) => r.ticker && (parseFloat(r.position_value_eur) || 0) > 0)
+        .filter((r) => r.ticker && parseLocalizedNumber(r.position_value_eur) > 0)
         .map((r) => {
-          const value = parseFloat(r.position_value_eur) || 0;
+          const value = parseLocalizedNumber(r.position_value_eur);
+          const qty = parseLocalizedNumber(r.quantity);
+          const ppu = parseLocalizedNumber(r.price_per_unit);
           return {
             ticker: r.ticker.toUpperCase().trim(),
             company_name: r.name?.trim() || r.ticker.toUpperCase().trim(),
             isin: r.isin?.trim() || "",
-            shares: parseFloat(r.quantity) || 0,
+            shares: qty,
             position_value: value,
             portfolio_weight: totalValue > 0 ? Math.round((value / totalValue) * 1000) / 10 : 0,
-            price_per_unit: parseFloat(r.price_per_unit) || 0,
+            price_per_unit: ppu,
             price_date: r.price_date || null,
             currency: r.currency || "EUR",
             security_type: r.security_type || "stock",
@@ -123,6 +153,15 @@ export function CsvUpload({ onUploadComplete }: { onUploadComplete?: () => void 
       positions.forEach((p, i) => {
         p.is_top40 = i < 40;
       });
+
+      // Store raw debug info for first 3 rows
+      setDebugRows(rows.slice(0, 3).map((r) => ({
+        ticker: r.ticker,
+        raw_quantity: r.quantity,
+        parsed_quantity: parseLocalizedNumber(r.quantity),
+        raw_value: r.position_value_eur,
+        parsed_value: parseLocalizedNumber(r.position_value_eur),
+      })));
 
       setPreview(positions);
       setStatus("idle");
@@ -187,6 +226,7 @@ export function CsvUpload({ onUploadComplete }: { onUploadComplete?: () => void 
     setPreview([]);
     setStatus("idle");
     setErrorMsg("");
+    setDebugRows([]);
     if (fileRef.current) fileRef.current.value = "";
   };
 
@@ -253,6 +293,17 @@ export function CsvUpload({ onUploadComplete }: { onUploadComplete?: () => void 
             {status === "done" && (
               <div className="flex items-center gap-2 rounded-md bg-gain/10 px-3 py-2 text-sm text-gain">
                 <CheckCircle2 className="h-4 w-4" /> Successfully imported {preview.length} positions
+              </div>
+            )}
+
+            {debugRows.length > 0 && (
+              <div className="rounded-md border border-primary/30 bg-primary/5 p-3 space-y-1">
+                <p className="text-xs font-semibold text-primary">Debug: First 3 rows mapping</p>
+                {debugRows.map((d, i) => (
+                  <p key={i} className="text-xs font-mono text-muted-foreground">
+                    {d.ticker}: qty=&quot;{d.raw_quantity}&quot; → {d.parsed_quantity} | val=&quot;{d.raw_value}&quot; → €{d.parsed_value.toLocaleString()}
+                  </p>
+                ))}
               </div>
             )}
 
