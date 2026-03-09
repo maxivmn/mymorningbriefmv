@@ -92,7 +92,7 @@ export default function PerformancePage() {
           <CardContent>
             <div className="h-[200px]">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={drawdown.series}>
+                <AreaChart data={drawdown.series.map(s => ({ ...s, snapshot_date: new Date(s.snapshot_date).getTime() }))}>
                   <defs>
                     <linearGradient id="gDrawdown" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="hsl(var(--loss))" stopOpacity={0.3} />
@@ -100,7 +100,7 @@ export default function PerformancePage() {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis dataKey="snapshot_date" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} tickFormatter={v => v.slice(5, 7) + '/' + v.slice(2, 4)} />
+                  <XAxis dataKey="snapshot_date" type="number" scale="time" domain={['dataMin', 'dataMax']} axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} tickFormatter={(ms) => new Date(ms).toLocaleDateString('en-GB', { month: 'short', year: '2-digit' })} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} tickFormatter={v => `${v}%`} domain={['dataMin - 1', 0]} />
                   <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: 12 }} formatter={(value: number) => [`${value.toFixed(2)}%`, 'Drawdown']} />
                   <Area type="monotone" dataKey="drawdown_pct" stroke="hsl(var(--loss))" strokeWidth={2} fill="url(#gDrawdown)" />
