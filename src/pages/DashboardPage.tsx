@@ -54,6 +54,12 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* Morning Briefing — future endpoint, skeleton until live */}
+        <MorningBriefing />
+
+        {/* Market Pulse — future endpoint, skeleton strip until live */}
+        <MarketPulse />
+
         {/* KPIs */}
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {loadingSummary ? (
