@@ -3,7 +3,7 @@ import { getGrowthAttribution } from '@/services/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { KpiCard } from '@/components/shared/KpiCard';
 import { ChartSkeleton } from '@/components/shared/LoadingSkeleton';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { ComposedChart, Area, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { DollarSign, TrendingUp, Banknote, Wallet } from 'lucide-react';
 
 export function GrowthAttribution() {
@@ -20,7 +20,17 @@ export function GrowthAttribution() {
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={320}>
-            <AreaChart data={data.series}>
+            <ComposedChart data={data.series}>
+              <defs>
+                <linearGradient id="capitalGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.7} />
+                  <stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0.3} />
+                </linearGradient>
+                <linearGradient id="gainGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(var(--gain))" stopOpacity={0.7} />
+                  <stop offset="95%" stopColor="hsl(var(--gain))" stopOpacity={0.3} />
+                </linearGradient>
+              </defs>
               <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis
                 dataKey="snapshot_date"
@@ -39,11 +49,40 @@ export function GrowthAttribution() {
                 labelFormatter={(v) => new Date(v).toLocaleDateString()}
               />
               <Legend iconSize={8} wrapperStyle={{ fontSize: 11 }} />
-              <Area type="monotone" dataKey="net_deployed_eur" name="Capital Invested" stackId="1" fill="hsl(var(--chart-1))" fillOpacity={0.6} stroke="hsl(var(--chart-1))" />
-              <Area type="monotone" dataKey="market_gain_eur" name="Market Gain" stackId="1" fill="hsl(var(--chart-2))" fillOpacity={0.6} stroke="hsl(var(--chart-2))" />
-              <Area type="monotone" dataKey="cumulative_income_eur" name="Income" stackId="1" fill="hsl(var(--chart-3))" fillOpacity={0.6} stroke="hsl(var(--chart-3))" />
-            </AreaChart>
+              {/* Base layer: Capital Invested */}
+              <Area
+                type="monotone"
+                dataKey="net_deployed_eur"
+                name="Capital Invested"
+                stackId="stack"
+                fill="url(#capitalGradient)"
+                stroke="hsl(var(--chart-1))"
+                strokeWidth={1}
+              />
+              {/* Stacked on top: Market Gain (green, goes negative when underwater) */}
+              <Area
+                type="monotone"
+                dataKey="market_gain_eur"
+                name="Market Gain"
+                stackId="stack"
+                fill="url(#gainGradient)"
+                stroke="hsl(var(--gain))"
+                strokeWidth={1}
+              />
+              {/* Line overlay: Portfolio Value */}
+              <Line
+                type="monotone"
+                dataKey="portfolio_value_eur"
+                name="Portfolio Value"
+                stroke="hsl(var(--foreground))"
+                strokeWidth={2}
+                dot={false}
+              />
+            </ComposedChart>
           </ResponsiveContainer>
+          <p className="text-[10px] text-muted-foreground mt-2">
+            Income (€{data.total_income_eur.toLocaleString()}) included in tooltip. When market gain is negative, portfolio is underwater.
+          </p>
         </CardContent>
       </Card>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
