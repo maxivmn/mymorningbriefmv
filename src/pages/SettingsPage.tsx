@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -6,18 +6,30 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
-import { loadSettings, saveSettings } from '@/services/api';
+import { loadSettings, saveSettings, checkHealth } from '@/services/api';
 import { toast } from 'sonner';
-import { Settings, Database, Newspaper, LogOut, Save } from 'lucide-react';
+import { Settings, Database, Newspaper, LogOut, Save, Activity } from 'lucide-react';
 import type { AppSettings } from '@/services/types';
 
 export default function SettingsPage() {
   const { user, signOut } = useAuth();
   const [settings, setSettings] = useState<AppSettings>(loadSettings());
+  const [healthStatus, setHealthStatus] = useState<string | null>(null);
 
   const handleSave = () => {
     saveSettings(settings);
     toast.success('Settings saved');
+  };
+
+  const handleHealthCheck = async () => {
+    try {
+      const res = await checkHealth();
+      setHealthStatus(`${res.status} — DB: ${res.database}`);
+      toast.success('API is reachable');
+    } catch (e: any) {
+      setHealthStatus(`Error: ${e.message}`);
+      toast.error('API unreachable');
+    }
   };
 
   return (
@@ -62,11 +74,11 @@ export default function SettingsPage() {
             <Label htmlFor="api-url">API Base URL</Label>
             <Input
               id="api-url"
-              placeholder="https://api.your-backend.com"
+              placeholder="http://localhost:8000"
               value={settings.apiBaseUrl}
               onChange={e => setSettings(s => ({ ...s, apiBaseUrl: e.target.value }))}
             />
-            <p className="text-[11px] text-muted-foreground">Leave empty to use default backend</p>
+            <p className="text-[11px] text-muted-foreground">The FastAPI backend base URL</p>
           </div>
           <div className="flex items-center justify-between">
             <div>
@@ -77,6 +89,15 @@ export default function SettingsPage() {
               checked={settings.useMockData}
               onCheckedChange={v => setSettings(s => ({ ...s, useMockData: v }))}
             />
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={handleHealthCheck} className="gap-2">
+              <Activity className="h-3.5 w-3.5" />
+              Test Connection
+            </Button>
+            {healthStatus && (
+              <Badge variant="outline" className="text-[10px]">{healthStatus}</Badge>
+            )}
           </div>
         </CardContent>
       </Card>
