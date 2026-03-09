@@ -19,6 +19,13 @@ import { ExposureDrift } from '@/components/dashboard/ExposureDrift';
 import { ThemeOverview } from '@/components/dashboard/ThemeOverview';
 import { RiskConcentration } from '@/components/dashboard/RiskConcentration';
 import { PerformanceContribution } from '@/components/dashboard/PerformanceContribution';
+import { MorningBriefing } from '@/components/dashboard/MorningBriefing';
+import { MarketPulse } from '@/components/dashboard/MarketPulse';
+import { PerformanceAttribution } from '@/components/dashboard/PerformanceAttribution';
+import { StrategySignals } from '@/components/dashboard/StrategySignals';
+import { WhatIfScenarios } from '@/components/dashboard/WhatIfScenarios';
+import { Watchlist } from '@/components/dashboard/Watchlist';
+import { ResearchNotesButton } from '@/components/dashboard/ResearchNotesPanel';
 
 export default function DashboardPage() {
   const { data: summary, isLoading: loadingSummary } = useQuery({ queryKey: ['portfolio-summary'], queryFn: getPortfolioSummary });
@@ -46,6 +53,12 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
+
+        {/* Morning Briefing — future endpoint, skeleton until live */}
+        <MorningBriefing />
+
+        {/* Market Pulse — future endpoint, skeleton strip until live */}
+        <MarketPulse />
 
         {/* KPIs */}
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -139,17 +152,14 @@ export default function DashboardPage() {
                 {loadingHoldings ? (
                   <div className="space-y-2">{[1, 2, 3, 4, 5].map(i => <div key={i} className="h-8 bg-muted animate-pulse rounded" />)}</div>
                 ) : topHoldings.map(h => (
-                  <Link
-                    key={h.isin}
-                    to={`/security/${h.isin}`}
-                    className="flex items-center justify-between rounded-md px-2 py-1.5 text-sm hover:bg-muted/50 transition-colors"
-                  >
-                    <span className="font-medium">{h.display_name}</span>
+                  <div key={h.isin} className="flex items-center justify-between rounded-md px-2 py-1.5 text-sm hover:bg-muted/50 transition-colors">
+                    <Link to={`/security/${h.isin}`} className="font-medium hover:underline">{h.display_name}</Link>
                     <div className="flex items-center gap-2">
                       <span className="text-[11px] text-muted-foreground">€{h.position_value_eur.toLocaleString()}</span>
                       <span className="font-mono text-xs w-12 text-right">{h.pct_of_portfolio?.toFixed(1)}%</span>
+                      <ResearchNotesButton isin={h.isin} displayName={h.display_name} />
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </CardContent>
             </Card>
@@ -186,6 +196,12 @@ export default function DashboardPage() {
             </Card>
           </div>
         </div>
+
+        {/* Future sections — skeleton until backend delivers */}
+        <PerformanceAttribution />
+        <StrategySignals />
+        <WhatIfScenarios />
+        <Watchlist />
       </div>
     </ErrorBoundary>
   );
