@@ -25,7 +25,7 @@ export function ExposureDrift() {
   const groupNames = Array.from(allGroups);
 
   const chartData = data?.snapshots.map(s => {
-    const row: Record<string, unknown> = { snapshot_date: s.snapshot_date };
+    const row: Record<string, unknown> = { snapshot_date: new Date(s.snapshot_date).getTime() };
     s.groups.forEach(g => { row[g.group_name] = g.weight_pct; });
     return row;
   }) ?? [];
