@@ -8,12 +8,17 @@ import type {
   PositionReturnsResponse, ExposureResponse, ExposureRow, DrawdownResponse,
   DailyDigestResponse, SecurityNewsResponse, ThemeNewsResponse, NewsItem,
   AppSettings, HealthResponse,
+  MoversResponse, PortfolioChangesResponse, ThemeDetailResponse,
+  ConcentrationResponse, GrowthAttributionResponse, DriftResponse,
+  ContributionResponse,
 } from './types';
 import {
   mockPortfolioSummary, mockValueHistory, mockHoldings, mockTwr,
   mockModifiedDietz, mockAnnualSummary, mockPositionReturns,
   mockSectorExposure, mockThemeExposure, mockStrategyExposure, mockCountryExposure,
   mockDrawdown, mockDailyDigest, mockSecurityNews, mockThemeNews,
+  mockMovers, mockPortfolioChanges, mockThemeDetail,
+  mockConcentration, mockGrowthAttribution, mockDrift, mockContribution,
 } from './mock-data';
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -41,12 +46,10 @@ export function loadSettings(): AppSettings {
   return getSettings();
 }
 
-// Simulate network delay for mock data
 function delay<T>(data: T, ms = 300): Promise<T> {
   return new Promise(resolve => setTimeout(() => resolve(data), ms));
 }
 
-// Live API fetch
 async function apiFetch<T>(path: string, params?: Record<string, string>): Promise<T> {
   const { apiBaseUrl } = getSettings();
   const url = new URL(path, apiBaseUrl);
@@ -64,7 +67,7 @@ function isMock(): boolean {
   return getSettings().useMockData;
 }
 
-// --- API functions ---
+// --- Original API functions ---
 
 export async function checkHealth(): Promise<HealthResponse> {
   return apiFetch('/api/health');
@@ -148,4 +151,41 @@ export async function getNewsBySecurity(isin: string): Promise<SecurityNewsRespo
 export async function getNewsByTheme(theme: string): Promise<ThemeNewsResponse> {
   if (isMock()) return delay({ ...mockThemeNews, theme });
   return apiFetch('/api/news/by-theme', { theme });
+}
+
+// --- New API functions (7 new endpoints) ---
+
+export async function getMovers(): Promise<MoversResponse> {
+  if (isMock()) return delay(mockMovers);
+  return apiFetch('/api/portfolio/movers');
+}
+
+export async function getPortfolioChanges(): Promise<PortfolioChangesResponse> {
+  if (isMock()) return delay(mockPortfolioChanges);
+  return apiFetch('/api/portfolio/changes');
+}
+
+export async function getThemeDetail(): Promise<ThemeDetailResponse> {
+  if (isMock()) return delay(mockThemeDetail);
+  return apiFetch('/api/exposure/theme/detail');
+}
+
+export async function getConcentration(): Promise<ConcentrationResponse> {
+  if (isMock()) return delay(mockConcentration);
+  return apiFetch('/api/risk/concentration');
+}
+
+export async function getGrowthAttribution(): Promise<GrowthAttributionResponse> {
+  if (isMock()) return delay(mockGrowthAttribution);
+  return apiFetch('/api/performance/growth-attribution');
+}
+
+export async function getExposureDrift(dimension: string = 'sector'): Promise<DriftResponse> {
+  if (isMock()) return delay(mockDrift);
+  return apiFetch('/api/exposure/drift', { dimension });
+}
+
+export async function getContribution(): Promise<ContributionResponse> {
+  if (isMock()) return delay(mockContribution);
+  return apiFetch('/api/performance/contribution');
 }

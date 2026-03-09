@@ -1,9 +1,12 @@
-// Mock data matching the exact API contract shapes from API_CONTRACT.md
+// Mock data matching the exact API contract shapes
 import type {
   PortfolioSummary, ValueHistoryResponse, HoldingsResponse,
   TwrResponse, ModifiedDietzResponse, AnnualSummaryResponse,
   PositionReturnsResponse, ExposureResponse, DrawdownResponse,
   DailyDigestResponse, SecurityNewsResponse, ThemeNewsResponse,
+  MoversResponse, PortfolioChangesResponse, ThemeDetailResponse,
+  ConcentrationResponse, GrowthAttributionResponse, DriftResponse,
+  ContributionResponse,
 } from './types';
 
 export const mockPortfolioSummary: PortfolioSummary = {
