@@ -1,9 +1,12 @@
-// Mock data matching the exact API contract shapes from API_CONTRACT.md
+// Mock data matching the exact API contract shapes
 import type {
   PortfolioSummary, ValueHistoryResponse, HoldingsResponse,
   TwrResponse, ModifiedDietzResponse, AnnualSummaryResponse,
   PositionReturnsResponse, ExposureResponse, DrawdownResponse,
   DailyDigestResponse, SecurityNewsResponse, ThemeNewsResponse,
+  MoversResponse, PortfolioChangesResponse, ThemeDetailResponse,
+  ConcentrationResponse, GrowthAttributionResponse, DriftResponse,
+  ContributionResponse,
 } from './types';
 
 export const mockPortfolioSummary: PortfolioSummary = {
@@ -211,4 +214,148 @@ export const mockThemeNews: ThemeNewsResponse = {
   ],
   total: 1,
   note: "Placeholder — live news feed not yet connected.",
+};
+
+export const mockMovers: MoversResponse = {
+  periods: [
+    {
+      label: "Since last snapshot", days: 1,
+      winners: [
+        { display_name: "SAP", price_change_pct: 0.0, value_change_eur: 0.0, current_value_eur: 1106.10, pct_of_portfolio: 3.07 },
+      ],
+      losers: [
+        { display_name: "Mercedes", price_change_pct: 0.0, value_change_eur: 0.0, current_value_eur: 122.04, pct_of_portfolio: 0.34 },
+      ],
+    },
+    {
+      label: "Past week", days: 7,
+      winners: [
+        { display_name: "TSMC", price_change_pct: 5.2, value_change_eur: 22.10, current_value_eur: 446.86, pct_of_portfolio: 1.24 },
+        { display_name: "Netflix", price_change_pct: 3.8, value_change_eur: 46.60, current_value_eur: 1273.65, pct_of_portfolio: 3.53 },
+        { display_name: "ASML", price_change_pct: 2.1, value_change_eur: 32.70, current_value_eur: 1590.29, pct_of_portfolio: 4.41 },
+      ],
+      losers: [
+        { display_name: "Samsung", price_change_pct: -4.1, value_change_eur: -42.30, current_value_eur: 990.00, pct_of_portfolio: 2.74 },
+        { display_name: "Mercedes", price_change_pct: -2.8, value_change_eur: -3.50, current_value_eur: 122.04, pct_of_portfolio: 0.34 },
+        { display_name: "AMD", price_change_pct: -1.5, value_change_eur: -3.14, current_value_eur: 206.14, pct_of_portfolio: 0.57 },
+      ],
+    },
+    {
+      label: "Past month", days: 30,
+      winners: [
+        { display_name: "TSMC", price_change_pct: 12.6, value_change_eur: 50.10, current_value_eur: 446.86, pct_of_portfolio: 1.24 },
+        { display_name: "Netflix", price_change_pct: 8.4, value_change_eur: 98.70, current_value_eur: 1273.65, pct_of_portfolio: 3.53 },
+      ],
+      losers: [
+        { display_name: "Samsung", price_change_pct: -7.2, value_change_eur: -76.80, current_value_eur: 990.00, pct_of_portfolio: 2.74 },
+        { display_name: "AMD", price_change_pct: -5.3, value_change_eur: -11.60, current_value_eur: 206.14, pct_of_portfolio: 0.57 },
+      ],
+    },
+  ],
+};
+
+export const mockPortfolioChanges: PortfolioChangesResponse = {
+  snap_from: "2026-03-05",
+  snap_to: "2026-03-07",
+  new_positions: [
+    { display_name: "Novo Nordisk", change_type: "new", value_from_eur: null, value_to_eur: 520.00, value_change_eur: 520.00, weight_from_pct: null, weight_to_pct: 1.44, price_change_pct: null },
+  ],
+  closed_positions: [],
+  increased_positions: [
+    { display_name: "MSCI EM", change_type: "increased", value_from_eur: 6800.00, value_to_eur: 7087.36, value_change_eur: 287.36, weight_from_pct: 18.85, weight_to_pct: 19.65, price_change_pct: 1.2 },
+  ],
+  decreased_positions: [
+    { display_name: "AMD", change_type: "decreased", value_from_eur: 230.00, value_to_eur: 206.14, value_change_eur: -23.86, weight_from_pct: 0.64, weight_to_pct: 0.57, price_change_pct: -1.5 },
+  ],
+};
+
+export const mockThemeDetail: ThemeDetailResponse = {
+  snapshot_date: "2026-03-07",
+  total_value_eur: 36068.66,
+  themes: [
+    { theme_name: "Emerging Markets Growth", value_eur: 7087.36, weight_pct: 19.65, holding_count: 2, top_holdings: [
+      { display_name: "MSCI EM", value_eur: 7087.36, weight_in_theme_pct: 100, pct_of_portfolio: 19.65 },
+    ]},
+    { theme_name: "Diversification", value_eur: 4138.46, weight_pct: 11.47, holding_count: 1, top_holdings: [
+      { display_name: "MSCI World", value_eur: 4138.46, weight_in_theme_pct: 100, pct_of_portfolio: 11.47 },
+    ]},
+    { theme_name: "Semiconductor Supply Chain", value_eur: 2243.29, weight_pct: 6.22, holding_count: 3, top_holdings: [
+      { display_name: "ASML", value_eur: 1590.29, weight_in_theme_pct: 70.89, pct_of_portfolio: 4.41 },
+      { display_name: "TSMC", value_eur: 446.86, weight_in_theme_pct: 19.92, pct_of_portfolio: 1.24 },
+      { display_name: "AMD", value_eur: 206.14, weight_in_theme_pct: 9.19, pct_of_portfolio: 0.57 },
+    ]},
+    { theme_name: "AI Infrastructure", value_eur: 1948.20, weight_pct: 5.40, holding_count: 2, top_holdings: [
+      { display_name: "SAP", value_eur: 1106.10, weight_in_theme_pct: 56.78, pct_of_portfolio: 3.07 },
+      { display_name: "TSMC", value_eur: 446.86, weight_in_theme_pct: 22.94, pct_of_portfolio: 1.24 },
+    ]},
+  ],
+};
+
+export const mockConcentration: ConcentrationResponse = {
+  top_1_pct: 19.65,
+  top_3_pct: 35.53,
+  top_5_pct: 43.07,
+  top_10_pct: 62.40,
+  largest_position_name: "MSCI EM",
+  largest_position_pct: 19.65,
+  sector_hhi: 3542,
+  largest_sector_name: "Multi-Sector",
+  largest_sector_pct: 54.69,
+  theme_hhi: 1120,
+  largest_theme_name: "Emerging Markets Growth",
+  largest_theme_pct: 19.65,
+};
+
+export const mockGrowthAttribution: GrowthAttributionResponse = {
+  series: [
+    { snapshot_date: "2024-06-30", net_deployed_eur: 1643.26, market_gain_eur: 0, cumulative_income_eur: 0, portfolio_value_eur: 1643.26 },
+    { snapshot_date: "2025-01-01", net_deployed_eur: 1800.00, market_gain_eur: 42.03, cumulative_income_eur: 10.00, portfolio_value_eur: 1852.03 },
+    { snapshot_date: "2025-06-01", net_deployed_eur: 8200.00, market_gain_eur: 620.00, cumulative_income_eur: 80.00, portfolio_value_eur: 8900.00 },
+    { snapshot_date: "2025-12-01", net_deployed_eur: 22800.00, market_gain_eur: 3492.00, cumulative_income_eur: 249.51, portfolio_value_eur: 26541.51 },
+    { snapshot_date: "2026-03-07", net_deployed_eur: 33517.80, market_gain_eur: 2191.21, cumulative_income_eur: 359.65, portfolio_value_eur: 36068.66 },
+  ],
+  total_net_deployed_eur: 33517.80,
+  total_market_gain_eur: 2191.21,
+  total_income_eur: 359.65,
+  total_portfolio_value_eur: 36068.66,
+};
+
+export const mockDrift: DriftResponse = {
+  dimension: "sector",
+  snapshots: [
+    { snapshot_date: "2024-06-30", total_value_eur: 1643.26, groups: [
+      { group_name: "Multi-Sector", value_eur: 900, weight_pct: 54.77 },
+      { group_name: "Information Technology", value_eur: 400, weight_pct: 24.35 },
+      { group_name: "Health Care", value_eur: 343.26, weight_pct: 20.89 },
+    ]},
+    { snapshot_date: "2025-06-01", total_value_eur: 8900, groups: [
+      { group_name: "Multi-Sector", value_eur: 4800, weight_pct: 53.93 },
+      { group_name: "Information Technology", value_eur: 1800, weight_pct: 20.22 },
+      { group_name: "Health Care", value_eur: 1200, weight_pct: 13.48 },
+      { group_name: "Communication Services", value_eur: 700, weight_pct: 7.87 },
+      { group_name: "Other", value_eur: 400, weight_pct: 4.49 },
+    ]},
+    { snapshot_date: "2026-03-07", total_value_eur: 36068.66, groups: [
+      { group_name: "Multi-Sector", value_eur: 19726.38, weight_pct: 54.69 },
+      { group_name: "Information Technology", value_eur: 6081.64, weight_pct: 16.86 },
+      { group_name: "Communication Services", value_eur: 2926.49, weight_pct: 8.11 },
+      { group_name: "Health Care", value_eur: 2807.26, weight_pct: 7.78 },
+      { group_name: "Other", value_eur: 4527.29, weight_pct: 12.55 },
+    ]},
+  ],
+};
+
+export const mockContribution: ContributionResponse = {
+  snapshot_date: "2026-03-07",
+  total_portfolio_value_eur: 36068.66,
+  total_gain_eur: 2191.21,
+  positions: [
+    { display_name: "Netflix", cost_basis_eur: 1020.0, current_value_eur: 1273.65, gain_eur: 253.65, portfolio_contribution_pct: 11.57 },
+    { display_name: "ASML", cost_basis_eur: 1355.68, current_value_eur: 1590.29, gain_eur: 234.61, portfolio_contribution_pct: 10.71 },
+    { display_name: "SAP", cost_basis_eur: 945.0, current_value_eur: 1106.10, gain_eur: 161.10, portfolio_contribution_pct: 7.35 },
+    { display_name: "TSMC", cost_basis_eur: 320.0, current_value_eur: 446.86, gain_eur: 126.86, portfolio_contribution_pct: 5.79 },
+    { display_name: "AMD", cost_basis_eur: 160.0, current_value_eur: 206.14, gain_eur: 46.14, portfolio_contribution_pct: 2.11 },
+    { display_name: "Samsung", cost_basis_eur: 1050.0, current_value_eur: 990.0, gain_eur: -60.0, portfolio_contribution_pct: -2.74 },
+    { display_name: "Mercedes", cost_basis_eur: null, current_value_eur: 122.04, gain_eur: null, portfolio_contribution_pct: null },
+  ],
 };
