@@ -1,3 +1,4 @@
+import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getGrowthAttribution } from '@/services/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -5,9 +6,29 @@ import { KpiCard } from '@/components/shared/KpiCard';
 import { ChartSkeleton } from '@/components/shared/LoadingSkeleton';
 import { ComposedChart, Area, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { DollarSign, TrendingUp, Banknote, Wallet } from 'lucide-react';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+
+const RANGES = [
+  { label: '1W', days: 7 },
+  { label: '1M', days: 30 },
+  { label: '6M', days: 182 },
+  { label: '1Y', days: 365 },
+  { label: 'All', days: null },
+] as const;
 
 export function GrowthAttribution() {
   const { data, isLoading } = useQuery({ queryKey: ['growth-attribution'], queryFn: getGrowthAttribution });
+  const [range, setRange] = useState<string>('All');
+
+  const chartData = useMemo(() => {
+    if (!data?.series.length) return [];
+    const all = data.series.map(p => ({ ...p, snapshot_date: new Date(p.snapshot_date).getTime() }));
+    const selected = RANGES.find(r => r.label === range);
+    if (!selected?.days) return all;
+    const latestMs = all[all.length - 1].snapshot_date;
+    const cutoff = latestMs - selected.days * 86_400_000;
+    return all.filter(p => p.snapshot_date >= cutoff);
+  }, [data, range]);
 
   if (isLoading) return <ChartSkeleton className="h-[350px] w-full" />;
   if (!data) return null;
@@ -15,12 +36,19 @@ export function GrowthAttribution() {
   return (
     <div className="space-y-4">
       <Card className="border-border/50">
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-2 flex flex-row items-center justify-between">
           <CardTitle className="text-sm font-medium">Growth Attribution</CardTitle>
+          <ToggleGroup type="single" value={range} onValueChange={(v) => v && setRange(v)} size="sm" variant="outline">
+            {RANGES.map(r => (
+              <ToggleGroupItem key={r.label} value={r.label} className="text-[11px] px-2 h-7">
+                {r.label}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={320}>
-            <ComposedChart data={data.series.map(p => ({ ...p, snapshot_date: new Date(p.snapshot_date).getTime() }))}>
+            <ComposedChart data={chartData}>
               <defs>
                 <linearGradient id="capitalGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.7} />
@@ -52,35 +80,9 @@ export function GrowthAttribution() {
                 labelFormatter={(v) => new Date(v).toLocaleDateString()}
               />
               <Legend iconSize={8} wrapperStyle={{ fontSize: 11 }} />
-              {/* Base layer: Capital Invested */}
-              <Area
-                type="monotone"
-                dataKey="net_deployed_eur"
-                name="Capital Invested"
-                stackId="stack"
-                fill="url(#capitalGradient)"
-                stroke="hsl(var(--chart-1))"
-                strokeWidth={1}
-              />
-              {/* Stacked on top: Market Gain (green, goes negative when underwater) */}
-              <Area
-                type="monotone"
-                dataKey="market_gain_eur"
-                name="Market Gain"
-                stackId="stack"
-                fill="url(#gainGradient)"
-                stroke="hsl(var(--gain))"
-                strokeWidth={1}
-              />
-              {/* Line overlay: Portfolio Value */}
-              <Line
-                type="monotone"
-                dataKey="portfolio_value_eur"
-                name="Portfolio Value"
-                stroke="hsl(var(--foreground))"
-                strokeWidth={2}
-                dot={false}
-              />
+              <Area type="monotone" dataKey="net_deployed_eur" name="Capital Invested" stackId="stack" fill="url(#capitalGradient)" stroke="hsl(var(--chart-1))" strokeWidth={1} />
+              <Area type="monotone" dataKey="market_gain_eur" name="Market Gain" stackId="stack" fill="url(#gainGradient)" stroke="hsl(var(--gain))" strokeWidth={1} />
+              <Line type="monotone" dataKey="portfolio_value_eur" name="Portfolio Value" stroke="hsl(var(--foreground))" strokeWidth={2} dot={false} />
             </ComposedChart>
           </ResponsiveContainer>
           <p className="text-[10px] text-muted-foreground mt-2">
