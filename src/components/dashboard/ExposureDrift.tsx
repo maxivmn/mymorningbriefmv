@@ -61,9 +61,12 @@ export function ExposureDrift() {
               <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis
                 dataKey="snapshot_date"
+                type="number"
+                scale="time"
+                domain={['dataMin', 'dataMax']}
                 tick={{ fontSize: 10 }}
                 className="fill-muted-foreground"
-                tickFormatter={(v) => new Date(v).toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}
+                tickFormatter={(ms) => new Date(ms).toLocaleDateString('en-GB', { month: 'short', year: '2-digit' })}
               />
               <YAxis tick={{ fontSize: 10 }} className="fill-muted-foreground" tickFormatter={(v) => `${v}%`} />
               <Tooltip
