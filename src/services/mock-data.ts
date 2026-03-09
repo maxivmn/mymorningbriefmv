@@ -1,154 +1,214 @@
+// Mock data matching the exact API contract shapes from API_CONTRACT.md
 import type {
-  PortfolioSummary, Holding, PortfolioSnapshot, AnnualSummaryRow,
-  ExposureRow, DailyDigest, NewsItem, DrawdownPoint, SecurityDetail,
+  PortfolioSummary, ValueHistoryResponse, HoldingsResponse,
+  TwrResponse, ModifiedDietzResponse, AnnualSummaryResponse,
+  PositionReturnsResponse, ExposureResponse, DrawdownResponse,
+  DailyDigestResponse, SecurityNewsResponse, ThemeNewsResponse,
 } from './types';
 
 export const mockPortfolioSummary: PortfolioSummary = {
-  portfolio_value_eur: 36068.66,
-  twr_pct: 12.4,
-  modified_dietz_pct: 11.8,
-  max_drawdown_pct: -8.1,
-  total_unrealized_eur: 4200.0,
-  total_realized_eur: 950.0,
-  dividends_eur: 140.0,
-  interest_eur: 25.0,
+  snapshot_date: "2026-03-07",
+  total_value_eur: 36068.66,
+  position_count: 50,
+  stated_total_eur: 36068.66,
+  diff_eur: 0.0,
 };
 
-export const mockHoldings: Holding[] = [
-  { isin: "US64110L1061", display_name: "Netflix", quantity: 15, current_value: 1273.65, portfolio_weight_pct: 3.53, unrealized_eur: 320.0, unrealized_pct: 33.5, sector: "Communication Services", country: "United States", primary_theme: "Digital Media", strategy_bucket: "Structural Growth", asset_class: "Equity" },
-  { isin: "US0378331005", display_name: "Apple", quantity: 25, current_value: 5437.50, portfolio_weight_pct: 15.07, unrealized_eur: 890.0, unrealized_pct: 19.6, sector: "Information Technology", country: "United States", primary_theme: "Platform Ecosystems", strategy_bucket: "Core Quality", asset_class: "Equity" },
-  { isin: "US5949181045", display_name: "Microsoft", quantity: 12, current_value: 4968.00, portfolio_weight_pct: 13.77, unrealized_eur: 720.0, unrealized_pct: 16.9, sector: "Information Technology", country: "United States", primary_theme: "Cloud & AI", strategy_bucket: "Core Quality", asset_class: "Equity" },
-  { isin: "US67066G1040", display_name: "NVIDIA", quantity: 8, current_value: 3520.00, portfolio_weight_pct: 9.76, unrealized_eur: 1100.0, unrealized_pct: 45.5, sector: "Information Technology", country: "United States", primary_theme: "AI Infrastructure", strategy_bucket: "Structural Growth", asset_class: "Equity" },
-  { isin: "NL0010273215", display_name: "ASML", quantity: 3, current_value: 2685.00, portfolio_weight_pct: 7.44, unrealized_eur: 410.0, unrealized_pct: 18.0, sector: "Information Technology", country: "Netherlands", primary_theme: "AI Infrastructure", strategy_bucket: "Structural Growth", asset_class: "Equity" },
-  { isin: "US0231351067", display_name: "Amazon", quantity: 18, current_value: 3312.00, portfolio_weight_pct: 9.18, unrealized_eur: 540.0, unrealized_pct: 19.5, sector: "Consumer Discretionary", country: "United States", primary_theme: "Cloud & AI", strategy_bucket: "Core Quality", asset_class: "Equity" },
-  { isin: "US02079K3059", display_name: "Alphabet", quantity: 20, current_value: 3400.00, portfolio_weight_pct: 9.43, unrealized_eur: 480.0, unrealized_pct: 16.4, sector: "Communication Services", country: "United States", primary_theme: "Cloud & AI", strategy_bucket: "Core Quality", asset_class: "Equity" },
-  { isin: "US8835561023", display_name: "Thermo Fisher", quantity: 4, current_value: 2200.00, portfolio_weight_pct: 6.10, unrealized_eur: 180.0, unrealized_pct: 8.9, sector: "Healthcare", country: "United States", primary_theme: "Life Sciences", strategy_bucket: "Defensive Quality", asset_class: "Equity" },
-  { isin: "IE00B4L5Y983", display_name: "iShares Core MSCI World", quantity: 50, current_value: 4150.00, portfolio_weight_pct: 11.50, unrealized_eur: 320.0, unrealized_pct: 8.4, sector: "Diversified", country: "Global", primary_theme: "Broad Market", strategy_bucket: "Core Index", asset_class: "ETF" },
-  { isin: "US5324571083", display_name: "Eli Lilly", quantity: 2, current_value: 1800.00, portfolio_weight_pct: 4.99, unrealized_eur: 290.0, unrealized_pct: 19.2, sector: "Healthcare", country: "United States", primary_theme: "Biotech Innovation", strategy_bucket: "Structural Growth", asset_class: "Equity" },
-  { isin: "US30303M1027", display_name: "Meta Platforms", quantity: 5, current_value: 2950.00, portfolio_weight_pct: 8.18, unrealized_eur: 380.0, unrealized_pct: 14.8, sector: "Communication Services", country: "United States", primary_theme: "Digital Advertising", strategy_bucket: "Structural Growth", asset_class: "Equity" },
-  { isin: "DE0007164600", display_name: "SAP", quantity: 10, current_value: 2373.51, portfolio_weight_pct: 6.58, unrealized_eur: 270.0, unrealized_pct: 12.8, sector: "Information Technology", country: "Germany", primary_theme: "Enterprise Software", strategy_bucket: "Core Quality", asset_class: "Equity" },
-];
+export const mockValueHistory: ValueHistoryResponse = {
+  snapshots: [
+    { snapshot_date: "2024-06-30", position_count: 14, total_value_eur: 1643.26, stated_total_eur: 1643.26, diff_eur: 0.0 },
+    { snapshot_date: "2024-09-01", position_count: 15, total_value_eur: 1720.50, stated_total_eur: 1720.50, diff_eur: 0.0 },
+    { snapshot_date: "2024-12-01", position_count: 16, total_value_eur: 1790.80, stated_total_eur: 1790.80, diff_eur: 0.0 },
+    { snapshot_date: "2025-01-01", position_count: 17, total_value_eur: 1852.03, stated_total_eur: 1852.03, diff_eur: 0.0 },
+    { snapshot_date: "2025-03-01", position_count: 37, total_value_eur: 4769.91, stated_total_eur: 4769.91, diff_eur: 0.0 },
+    { snapshot_date: "2025-05-01", position_count: 40, total_value_eur: 8520.30, stated_total_eur: 8520.30, diff_eur: 0.0 },
+    { snapshot_date: "2025-07-01", position_count: 42, total_value_eur: 12450.00, stated_total_eur: 12450.00, diff_eur: 0.0 },
+    { snapshot_date: "2025-09-01", position_count: 44, total_value_eur: 17200.50, stated_total_eur: 17200.50, diff_eur: 0.0 },
+    { snapshot_date: "2025-10-01", position_count: 45, total_value_eur: 20100.00, stated_total_eur: 20100.00, diff_eur: 0.0 },
+    { snapshot_date: "2025-11-01", position_count: 46, total_value_eur: 23800.00, stated_total_eur: 23800.00, diff_eur: 0.0 },
+    { snapshot_date: "2025-12-01", position_count: 47, total_value_eur: 26541.51, stated_total_eur: 26541.51, diff_eur: 0.0 },
+    { snapshot_date: "2026-01-01", position_count: 48, total_value_eur: 26111.05, stated_total_eur: 26111.05, diff_eur: 0.0 },
+    { snapshot_date: "2026-02-01", position_count: 49, total_value_eur: 30500.00, stated_total_eur: 30500.00, diff_eur: 0.0 },
+    { snapshot_date: "2026-03-01", position_count: 50, total_value_eur: 34200.00, stated_total_eur: 34200.00, diff_eur: 0.0 },
+    { snapshot_date: "2026-03-04", position_count: 50, total_value_eur: 37167.65, stated_total_eur: 37167.65, diff_eur: 0.0 },
+    { snapshot_date: "2026-03-05", position_count: 50, total_value_eur: 36068.66, stated_total_eur: 36068.66, diff_eur: 0.0 },
+    { snapshot_date: "2026-03-07", position_count: 50, total_value_eur: 36068.66, stated_total_eur: 36068.66, diff_eur: 0.0 },
+  ],
+  first_date: "2024-06-30",
+  last_date: "2026-03-07",
+  total_snapshots: 17,
+};
 
-export const mockPortfolioHistory: PortfolioSnapshot[] = [
-  { snapshot_date: "2025-01-01", portfolio_value: 20000, net_deployed: 18500, unrealized: 1500 },
-  { snapshot_date: "2025-02-01", portfolio_value: 20800, net_deployed: 19000, unrealized: 1800 },
-  { snapshot_date: "2025-03-01", portfolio_value: 21500, net_deployed: 19500, unrealized: 2000 },
-  { snapshot_date: "2025-04-01", portfolio_value: 22300, net_deployed: 20000, unrealized: 2300 },
-  { snapshot_date: "2025-05-01", portfolio_value: 21800, net_deployed: 20500, unrealized: 1300 },
-  { snapshot_date: "2025-06-01", portfolio_value: 23200, net_deployed: 21000, unrealized: 2200 },
-  { snapshot_date: "2025-07-01", portfolio_value: 24500, net_deployed: 22000, unrealized: 2500 },
-  { snapshot_date: "2025-08-01", portfolio_value: 25100, net_deployed: 23000, unrealized: 2100 },
-  { snapshot_date: "2025-09-01", portfolio_value: 26800, net_deployed: 24000, unrealized: 2800 },
-  { snapshot_date: "2025-10-01", portfolio_value: 28200, net_deployed: 25000, unrealized: 3200 },
-  { snapshot_date: "2025-11-01", portfolio_value: 30500, net_deployed: 26000, unrealized: 4500 },
-  { snapshot_date: "2025-12-01", portfolio_value: 32000, net_deployed: 27000, unrealized: 5000 },
-  { snapshot_date: "2026-01-01", portfolio_value: 33500, net_deployed: 28000, unrealized: 5500 },
-  { snapshot_date: "2026-02-01", portfolio_value: 34800, net_deployed: 29000, unrealized: 5800 },
-  { snapshot_date: "2026-03-01", portfolio_value: 36068.66, net_deployed: 30000, unrealized: 6068.66 },
-];
-
-export const mockAnnualSummary: AnnualSummaryRow[] = [
-  { year: 2025, start_date: "2025-01-01", end_date: "2025-12-31", start_value: 20000, end_value: 32000, new_money_eur: 8500, realized_eur: 700, interest_eur: 20, dividends_eur: 80, twr_pct: 13.2 },
-  { year: 2026, start_date: "2026-01-01", end_date: "2026-03-08", start_value: 32000, end_value: 36068.66, new_money_eur: 1000, realized_eur: 250, interest_eur: 5, dividends_eur: 60, twr_pct: 9.6 },
-];
-
-export const mockSectorExposure: ExposureRow[] = [
-  { label: "Information Technology", value_eur: 13546.51, weight_pct: 37.55 },
-  { label: "Communication Services", value_eur: 7623.65, weight_pct: 21.14 },
-  { label: "Consumer Discretionary", value_eur: 3312.00, weight_pct: 9.18 },
-  { label: "Healthcare", value_eur: 4000.00, weight_pct: 11.09 },
-  { label: "Diversified", value_eur: 4150.00, weight_pct: 11.50 },
-  { label: "Other", value_eur: 3436.50, weight_pct: 9.53 },
-];
-
-export const mockCountryExposure: ExposureRow[] = [
-  { label: "United States", value_eur: 28861.15, weight_pct: 79.97 },
-  { label: "Netherlands", value_eur: 2685.00, weight_pct: 7.44 },
-  { label: "Germany", value_eur: 2373.51, weight_pct: 6.58 },
-  { label: "Global (ETF)", value_eur: 4150.00, weight_pct: 11.50 },
-];
-
-export const mockThemeExposure: ExposureRow[] = [
-  { label: "AI Infrastructure", value_eur: 6205.00, weight_pct: 17.20 },
-  { label: "Cloud & AI", value_eur: 11680.00, weight_pct: 32.38 },
-  { label: "Platform Ecosystems", value_eur: 5437.50, weight_pct: 15.07 },
-  { label: "Digital Media", value_eur: 1273.65, weight_pct: 3.53 },
-  { label: "Digital Advertising", value_eur: 2950.00, weight_pct: 8.18 },
-  { label: "Broad Market", value_eur: 4150.00, weight_pct: 11.50 },
-  { label: "Life Sciences", value_eur: 2200.00, weight_pct: 6.10 },
-  { label: "Biotech Innovation", value_eur: 1800.00, weight_pct: 4.99 },
-  { label: "Enterprise Software", value_eur: 2373.51, weight_pct: 6.58 },
-];
-
-export const mockStrategyExposure: ExposureRow[] = [
-  { label: "Core Quality", value_eur: 16117.50, weight_pct: 44.68 },
-  { label: "Structural Growth", value_eur: 12228.65, weight_pct: 33.90 },
-  { label: "Core Index", value_eur: 4150.00, weight_pct: 11.50 },
-  { label: "Defensive Quality", value_eur: 2200.00, weight_pct: 6.10 },
-];
-
-export const mockAssetClassExposure: ExposureRow[] = [
-  { label: "Equity", value_eur: 31918.66, weight_pct: 88.50 },
-  { label: "ETF", value_eur: 4150.00, weight_pct: 11.50 },
-];
-
-export const mockDrawdown: DrawdownPoint[] = [
-  { date: "2025-01-01", drawdown_pct: 0 },
-  { date: "2025-02-01", drawdown_pct: -1.2 },
-  { date: "2025-03-01", drawdown_pct: -0.5 },
-  { date: "2025-04-01", drawdown_pct: 0 },
-  { date: "2025-05-01", drawdown_pct: -8.1 },
-  { date: "2025-06-01", drawdown_pct: -3.2 },
-  { date: "2025-07-01", drawdown_pct: 0 },
-  { date: "2025-08-01", drawdown_pct: -2.1 },
-  { date: "2025-09-01", drawdown_pct: 0 },
-  { date: "2025-10-01", drawdown_pct: -1.5 },
-  { date: "2025-11-01", drawdown_pct: 0 },
-  { date: "2025-12-01", drawdown_pct: -0.8 },
-  { date: "2026-01-01", drawdown_pct: -1.0 },
-  { date: "2026-02-01", drawdown_pct: 0 },
-  { date: "2026-03-01", drawdown_pct: -0.3 },
-];
-
-export const mockDailyDigest: DailyDigest = {
-  date: "2026-03-08",
-  summary: [
-    { headline: "Micron raises outlook on AI memory demand", security: "Micron", theme: "AI Infrastructure", sentiment: "positive", importance: "high", why_it_matters: "Improves the outlook for your memory semiconductor exposure." },
-    { headline: "EU antitrust probe targets Big Tech ad practices", security: "Meta Platforms", theme: "Digital Advertising", sentiment: "negative", importance: "medium", why_it_matters: "May pressure Meta's EU advertising revenue, affecting ~8% of your portfolio." },
-    { headline: "Microsoft Azure revenue beats expectations", security: "Microsoft", theme: "Cloud & AI", sentiment: "positive", importance: "high", why_it_matters: "Validates cloud spending thesis — Microsoft is ~14% of your portfolio." },
-    { headline: "SAP announces accelerated S/4HANA Cloud migration", security: "SAP", theme: "Enterprise Software", sentiment: "positive", importance: "medium", why_it_matters: "Supports SAP's recurring revenue transition, positive for your ~7% position." },
-    { headline: "ASML reports strong EUV bookings for H2 2026", security: "ASML", theme: "AI Infrastructure", sentiment: "positive", importance: "high", why_it_matters: "Strong lithography demand confirms continued AI capex cycle benefiting your semiconductor positions." },
+export const mockHoldings: HoldingsResponse = {
+  snapshot_date: "2026-03-07",
+  position_count: 50,
+  total_value_eur: 36068.66,
+  holdings: [
+    { snapshot_date: "2026-03-07", isin: "LU1681045370", display_name: "MSCI EM", broker_name: "AIS-Amundi MSCI Em.Ma.Swap Namens-Anteile C Cap.EUR o.N.", custom_name: "MSCI EM", is_crypto: false, asset_class: "Equity", sector: "Multi-Sector", country: "Multi", region: "Emerging Markets", quantity: 1095.96082, price_per_unit: 6.47, price_date: "2026-03-07", position_value_eur: 7087.36, portfolio_total_eur: 36068.66, pct_of_portfolio: 19.65 },
+    { snapshot_date: "2026-03-07", isin: "IE00B4L5Y983", display_name: "MSCI World", broker_name: "iShsIII-Core MSCI World U.ETF", custom_name: "MSCI World", is_crypto: false, asset_class: "Equity", sector: "Multi-Sector", country: "Multi", region: "Global Developed", quantity: 37.034857, price_per_unit: 111.75, price_date: "2026-03-07", position_value_eur: 4138.46, portfolio_total_eur: 36068.66, pct_of_portfolio: 11.47 },
+    { snapshot_date: "2026-03-07", isin: "NL0010273215", display_name: "ASML", broker_name: "ASML Holding N.V.", custom_name: "ASML", is_crypto: false, asset_class: "Equity", sector: "Information Technology", country: "Netherlands", region: "Netherlands", quantity: 1.427294, price_per_unit: 1114.20, price_date: "2026-03-07", position_value_eur: 1590.29, portfolio_total_eur: 36068.66, pct_of_portfolio: 4.41 },
+    { snapshot_date: "2026-03-07", isin: "US64110L1061", display_name: "Netflix", broker_name: "Netflix Inc.", custom_name: "Netflix", is_crypto: false, asset_class: "Equity", sector: "Communication Services", country: "United States", region: "United States", quantity: 1.2, price_per_unit: 1061.38, price_date: "2026-03-07", position_value_eur: 1273.65, portfolio_total_eur: 36068.66, pct_of_portfolio: 3.53 },
+    { snapshot_date: "2026-03-07", isin: "US0079031078", display_name: "AMD", broker_name: "Advanced Micro Devices", custom_name: "AMD", is_crypto: false, asset_class: "Equity", sector: "Information Technology", country: "United States", region: "United States", quantity: 1.244669, price_per_unit: 165.62, price_date: "2026-03-07", position_value_eur: 206.14, portfolio_total_eur: 36068.66, pct_of_portfolio: 0.57 },
+    { snapshot_date: "2026-03-07", isin: "DE0007164600", display_name: "SAP", broker_name: "SAP SE", custom_name: "SAP", is_crypto: false, asset_class: "Equity", sector: "Information Technology", country: "Germany", region: "Germany", quantity: 4.5, price_per_unit: 245.80, price_date: "2026-03-07", position_value_eur: 1106.10, portfolio_total_eur: 36068.66, pct_of_portfolio: 3.07 },
+    { snapshot_date: "2026-03-07", isin: "US8740391003", display_name: "TSMC", broker_name: "Taiwan Semiconductor Mfg.", custom_name: "TSMC", is_crypto: false, asset_class: "Equity", sector: "Information Technology", country: "Taiwan", region: "Taiwan", quantity: 1.538245, price_per_unit: 290.50, price_date: "2026-03-07", position_value_eur: 446.86, portfolio_total_eur: 36068.66, pct_of_portfolio: 1.24 },
+    { snapshot_date: "2026-03-07", isin: "DE0007100000", display_name: "Mercedes", broker_name: "Mercedes-Benz Group AG", custom_name: "Mercedes", is_crypto: false, asset_class: "Equity", sector: "Consumer Discretionary", country: "Germany", region: "Germany", quantity: 2.2294, price_per_unit: 54.75, price_date: "2026-03-07", position_value_eur: 122.04, portfolio_total_eur: 36068.66, pct_of_portfolio: 0.34 },
+    { snapshot_date: "2026-03-07", isin: "KR7005930003", display_name: "Samsung", broker_name: "Samsung Electronics", custom_name: "Samsung", is_crypto: false, asset_class: "Equity", sector: "Information Technology", country: "South Korea", region: "South Korea", quantity: 25.0, price_per_unit: 39.60, price_date: "2026-03-07", position_value_eur: 990.00, portfolio_total_eur: 36068.66, pct_of_portfolio: 2.74 },
+    { snapshot_date: "2026-03-07", isin: "IE00BKM4GZ66", display_name: "ESG Leaders", broker_name: "iShares ESG Aware MSCI USA ETF", custom_name: "ESG Leaders", is_crypto: false, asset_class: "Equity", sector: "Multi-Sector", country: "Multi", region: "Global Developed", quantity: 10.0, price_per_unit: 114.90, price_date: "2026-03-07", position_value_eur: 1149.00, portfolio_total_eur: 36068.66, pct_of_portfolio: 3.19 },
   ],
 };
 
-export const mockNewsItems: NewsItem[] = [
-  { id: "news_1", published_at: "2026-03-08T07:30:00Z", headline: "ASML supplier bottlenecks ease, EUV capacity expanding", source: "Reuters", url: "#", security: "ASML", theme: "AI Infrastructure", sector: "Information Technology", sentiment: "positive", importance: "medium", why_it_matters: "May support lithography throughput and AI chip capacity." },
-  { id: "news_2", published_at: "2026-03-08T06:15:00Z", headline: "Apple announces major AI integration across iOS 20", source: "Bloomberg", url: "#", security: "Apple", theme: "Platform Ecosystems", sector: "Information Technology", sentiment: "positive", importance: "high", why_it_matters: "Strengthens Apple's AI narrative and ecosystem lock-in — relevant to your 15% Apple position." },
-  { id: "news_3", published_at: "2026-03-08T05:45:00Z", headline: "NVIDIA H200 demand exceeds supply through Q3 2026", source: "SemiAnalysis", url: "#", security: "NVIDIA", theme: "AI Infrastructure", sector: "Information Technology", sentiment: "positive", importance: "high", why_it_matters: "Sustained GPU demand supports NVIDIA's premium valuation in your portfolio." },
-  { id: "news_4", published_at: "2026-03-07T22:00:00Z", headline: "Eli Lilly GLP-1 drug shows 28% weight loss in Phase 3", source: "STAT News", url: "#", security: "Eli Lilly", theme: "Biotech Innovation", sector: "Healthcare", sentiment: "positive", importance: "high", why_it_matters: "Potential blockbuster drug — your Lilly position could see significant upside." },
-  { id: "news_5", published_at: "2026-03-07T20:30:00Z", headline: "Amazon Web Services launches next-gen custom AI chips", source: "TechCrunch", url: "#", security: "Amazon", theme: "Cloud & AI", sector: "Consumer Discretionary", sentiment: "positive", importance: "medium", why_it_matters: "AWS custom silicon reduces dependency on NVIDIA, boosting margins for your Amazon holding." },
-  { id: "news_6", published_at: "2026-03-07T18:00:00Z", headline: "Alphabet DeepMind achieves reasoning breakthrough", source: "Nature", url: "#", security: "Alphabet", theme: "Cloud & AI", sector: "Communication Services", sentiment: "positive", importance: "medium", why_it_matters: "Advances Google's AI leadership, supporting your ~9% Alphabet position." },
-  { id: "news_7", published_at: "2026-03-07T16:00:00Z", headline: "Thermo Fisher wins $2B government lab contract", source: "MarketWatch", url: "#", security: "Thermo Fisher", theme: "Life Sciences", sector: "Healthcare", sentiment: "positive", importance: "medium", why_it_matters: "Strengthens Thermo Fisher's recurring revenue base." },
-  { id: "news_8", published_at: "2026-03-07T14:30:00Z", headline: "iShares MSCI World ETF sees record inflows", source: "ETF.com", url: "#", security: "iShares Core MSCI World", theme: "Broad Market", sector: "Diversified", sentiment: "neutral", importance: "low", why_it_matters: "Positive flow signal for your core index allocation." },
-  { id: "news_9", published_at: "2026-03-07T12:00:00Z", headline: "Meta announces Threads reaching 500M users", source: "The Verge", url: "#", security: "Meta Platforms", theme: "Digital Advertising", sector: "Communication Services", sentiment: "positive", importance: "medium", why_it_matters: "New engagement surface for Meta's ad platform, supporting revenue growth." },
-  { id: "news_10", published_at: "2026-03-07T10:00:00Z", headline: "SAP Cloud revenue grows 32% YoY in Q1 preview", source: "Handelsblatt", url: "#", security: "SAP", theme: "Enterprise Software", sector: "Information Technology", sentiment: "positive", importance: "medium", why_it_matters: "Accelerating cloud transition validates SAP's long-term thesis." },
-];
+export const mockTwr: TwrResponse = {
+  twr_pct: 20.4665,
+  start_date: "2024-06-30",
+  end_date: "2026-03-07",
+  period_days: 615,
+};
 
-export const mockSecurityDetail: SecurityDetail = {
-  isin: "US67066G1040",
-  display_name: "NVIDIA",
-  ticker: "NVDA",
-  quantity: 8,
-  current_value: 3520.00,
-  portfolio_weight_pct: 9.76,
-  unrealized_eur: 1100.0,
-  unrealized_pct: 45.5,
-  sector: "Information Technology",
-  country: "United States",
-  primary_theme: "AI Infrastructure",
-  strategy_bucket: "Structural Growth",
-  asset_class: "Equity",
-  purchase_date: "2024-06-15",
-  cost_basis: 2420.00,
-  notes: "Core AI infrastructure position. Benefiting from datacenter GPU demand cycle.",
+export const mockModifiedDietz: ModifiedDietzResponse = {
+  return_pct: 30.0684,
+  start_date: "2024-06-30",
+  end_date: "2026-03-07",
+  period_days: 615,
+  begin_value_eur: 1643.26,
+  end_value_eur: 36068.66,
+};
+
+export const mockAnnualSummary: AnnualSummaryResponse = {
+  rows: [
+    { year: 2024, start_date: "2024-06-30", end_date: "2024-06-30", start_value_eur: 1643.26, end_value_eur: 1643.26, new_money_eur: 0.0, realized_eur: 0.0, interest_eur: 0.0, dividends_eur: 0.0, twr_pct: null },
+    { year: 2025, start_date: "2025-01-01", end_date: "2025-12-01", start_value_eur: 1852.03, end_value_eur: 26541.51, new_money_eur: 23565.16, realized_eur: 95.68, interest_eur: 124.65, dividends_eur: 124.91, twr_pct: 15.4662 },
+    { year: 2026, start_date: "2026-01-01", end_date: "2026-03-07", start_value_eur: 26111.05, end_value_eur: 36068.66, new_money_eur: 10717.80, realized_eur: 1.44, interest_eur: 59.32, dividends_eur: 20.33, twr_pct: -1.1785 },
+  ],
+};
+
+export const mockPositionReturns: PositionReturnsResponse = {
+  snapshot_date: "2026-03-07",
+  positions: [
+    { isin: "US8740391003", display_name: "TSMC", quantity: 1.538245, avg_cost_per_unit: 208.02928, cost_basis_eur: 320.0, current_value_eur: 446.86, unrealized_eur: 126.86, unrealized_pct: 39.6437 },
+    { isin: "US0079031078", display_name: "AMD", quantity: 1.244669, avg_cost_per_unit: 128.548233, cost_basis_eur: 160.0, current_value_eur: 206.14, unrealized_eur: 46.14, unrealized_pct: 28.8375 },
+    { isin: "NL0010273215", display_name: "ASML", quantity: 1.427294, avg_cost_per_unit: 950.0, cost_basis_eur: 1355.68, current_value_eur: 1590.29, unrealized_eur: 234.61, unrealized_pct: 17.3047 },
+    { isin: "US64110L1061", display_name: "Netflix", quantity: 1.2, avg_cost_per_unit: 850.0, cost_basis_eur: 1020.0, current_value_eur: 1273.65, unrealized_eur: 253.65, unrealized_pct: 24.8676 },
+    { isin: "DE0007164600", display_name: "SAP", quantity: 4.5, avg_cost_per_unit: 210.0, cost_basis_eur: 945.0, current_value_eur: 1106.10, unrealized_eur: 161.10, unrealized_pct: 17.0476 },
+    { isin: "DE0007100000", display_name: "Mercedes", quantity: 2.2294, avg_cost_per_unit: null, cost_basis_eur: null, current_value_eur: 122.04, unrealized_eur: null, unrealized_pct: null },
+    { isin: "KR7005930003", display_name: "Samsung", quantity: 25.0, avg_cost_per_unit: 42.0, cost_basis_eur: 1050.0, current_value_eur: 990.00, unrealized_eur: -60.0, unrealized_pct: -5.7143 },
+  ],
+};
+
+export const mockSectorExposure: ExposureResponse = {
+  snapshot_date: "2026-03-07",
+  dimension: "sector",
+  total_value_eur: 36068.66,
+  rows: [
+    { group_name: "Multi-Sector", value_eur: 19726.38, weight_pct: 54.69 },
+    { group_name: "Information Technology", value_eur: 6081.64, weight_pct: 16.86 },
+    { group_name: "Communication Services", value_eur: 2926.49, weight_pct: 8.11 },
+    { group_name: "Health Care", value_eur: 2807.26, weight_pct: 7.78 },
+    { group_name: "Materials", value_eur: 1769.20, weight_pct: 4.91 },
+    { group_name: "Consumer Discretionary", value_eur: 931.08, weight_pct: 2.58 },
+    { group_name: "Industrials", value_eur: 604.04, weight_pct: 1.67 },
+    { group_name: "Consumer Staples", value_eur: 499.80, weight_pct: 1.39 },
+    { group_name: "Energy", value_eur: 470.30, weight_pct: 1.30 },
+    { group_name: "Financials", value_eur: 152.93, weight_pct: 0.42 },
+    { group_name: "Utilities", value_eur: 99.54, weight_pct: 0.28 },
+  ],
+};
+
+export const mockThemeExposure: ExposureResponse = {
+  snapshot_date: "2026-03-07",
+  dimension: "theme",
+  total_value_eur: 36068.66,
+  rows: [
+    { group_name: "Emerging Markets Growth", value_eur: 7087.36, weight_pct: 19.65 },
+    { group_name: "Diversification", value_eur: 4138.46, weight_pct: 11.47 },
+    { group_name: "Germany / DAX", value_eur: 2881.23, weight_pct: 7.99 },
+    { group_name: "US Large Cap", value_eur: 2364.30, weight_pct: 6.55 },
+    { group_name: "Semiconductor Supply Chain", value_eur: 2243.29, weight_pct: 6.22 },
+    { group_name: "AI Infrastructure", value_eur: 1948.20, weight_pct: 5.40 },
+    { group_name: "European Diversification", value_eur: 1449.25, weight_pct: 4.02 },
+    { group_name: "Streaming Media", value_eur: 1273.65, weight_pct: 3.53 },
+    { group_name: "Healthcare Innovation", value_eur: 1270.86, weight_pct: 3.52 },
+    { group_name: "ESG / Sustainable Investing", value_eur: 1149.00, weight_pct: 3.19 },
+  ],
+};
+
+export const mockStrategyExposure: ExposureResponse = {
+  snapshot_date: "2026-03-07",
+  dimension: "strategy",
+  total_value_eur: 36068.66,
+  rows: [
+    { group_name: "Beta", value_eur: 19416.55, weight_pct: 53.83 },
+    { group_name: "Structural Growth", value_eur: 8657.76, weight_pct: 24.00 },
+    { group_name: "Defensive Compounder", value_eur: 4787.99, weight_pct: 13.27 },
+    { group_name: "Innovation", value_eur: 1604.94, weight_pct: 4.45 },
+    { group_name: "Cyclical Value", value_eur: 1131.12, weight_pct: 3.14 },
+    { group_name: "Macro / Real Assets", value_eur: 470.30, weight_pct: 1.30 },
+  ],
+};
+
+export const mockCountryExposure: ExposureResponse = {
+  snapshot_date: "2026-03-07",
+  dimension: "country",
+  total_value_eur: 36068.66,
+  rows: [
+    { group_name: "Multi", value_eur: 18309.80, weight_pct: 50.76 },
+    { group_name: "Germany", value_eur: 5722.52, weight_pct: 15.87 },
+    { group_name: "United States", value_eur: 5234.27, weight_pct: 14.51 },
+    { group_name: "Netherlands", value_eur: 1590.29, weight_pct: 4.41 },
+    { group_name: "South Korea", value_eur: 990.00, weight_pct: 2.74 },
+    { group_name: "Belgium", value_eur: 930.60, weight_pct: 2.58 },
+    { group_name: "Ireland", value_eur: 730.88, weight_pct: 2.03 },
+    { group_name: "Sweden", value_eur: 673.00, weight_pct: 1.87 },
+    { group_name: "Canada", value_eur: 623.23, weight_pct: 1.73 },
+    { group_name: "United Kingdom", value_eur: 565.20, weight_pct: 1.57 },
+    { group_name: "Taiwan", value_eur: 446.86, weight_pct: 1.24 },
+    { group_name: "China", value_eur: 252.01, weight_pct: 0.70 },
+  ],
+};
+
+export const mockDrawdown: DrawdownResponse = {
+  max_drawdown_pct: -2.9568,
+  peak_date: "2026-03-04",
+  trough_date: "2026-03-05",
+  duration_days: 1,
+  series: [
+    { snapshot_date: "2024-06-30", value_eur: 1643.26, peak_value_eur: 1643.26, drawdown_pct: 0.0 },
+    { snapshot_date: "2025-01-01", value_eur: 1852.03, peak_value_eur: 1852.03, drawdown_pct: 0.0 },
+    { snapshot_date: "2025-03-01", value_eur: 4769.91, peak_value_eur: 4769.91, drawdown_pct: 0.0 },
+    { snapshot_date: "2025-07-01", value_eur: 12450.00, peak_value_eur: 12450.00, drawdown_pct: 0.0 },
+    { snapshot_date: "2025-12-01", value_eur: 26541.51, peak_value_eur: 26541.51, drawdown_pct: 0.0 },
+    { snapshot_date: "2026-01-01", value_eur: 26111.05, peak_value_eur: 26541.51, drawdown_pct: -1.6218 },
+    { snapshot_date: "2026-02-01", value_eur: 30500.00, peak_value_eur: 30500.00, drawdown_pct: 0.0 },
+    { snapshot_date: "2026-03-01", value_eur: 34200.00, peak_value_eur: 34200.00, drawdown_pct: 0.0 },
+    { snapshot_date: "2026-03-04", value_eur: 37167.65, peak_value_eur: 37167.65, drawdown_pct: 0.0 },
+    { snapshot_date: "2026-03-05", value_eur: 36068.66, peak_value_eur: 37167.65, drawdown_pct: -2.9568 },
+    { snapshot_date: "2026-03-07", value_eur: 36068.66, peak_value_eur: 37167.65, drawdown_pct: -2.9568 },
+  ],
+};
+
+export const mockDailyDigest: DailyDigestResponse = {
+  date: "2026-03-07",
+  items: [
+    { id: "placeholder-1", headline: "Live news feed not yet connected", summary: "This endpoint is ready for integration with a news data source.", sentiment: "neutral", source: "system", published_at: "2026-03-07T08:00:00.000000Z", category: "system", ticker_symbol: null, relevance_score: null },
+  ],
+  total: 1,
+  note: "Placeholder — live news feed not yet connected.",
+};
+
+export const mockSecurityNews: SecurityNewsResponse = {
+  isin: "placeholder",
+  display_name: "placeholder",
+  items: [
+    { id: "placeholder-1", headline: "Live news feed not yet connected", summary: "This endpoint is ready for integration with a news data source.", sentiment: "neutral", source: "system", published_at: "2026-03-07T08:00:00.000000Z", category: "system", ticker_symbol: null, relevance_score: null },
+  ],
+  total: 1,
+  note: "Placeholder — live news feed not yet connected.",
+};
+
+export const mockThemeNews: ThemeNewsResponse = {
+  theme: "placeholder",
+  items: [
+    { id: "placeholder-1", headline: "Live news feed not yet connected", summary: "This endpoint is ready for integration with a news data source.", sentiment: "neutral", source: "system", published_at: "2026-03-07T08:00:00.000000Z", category: "system", ticker_symbol: null, relevance_score: null },
+  ],
+  total: 1,
+  note: "Placeholder — live news feed not yet connected.",
 };
