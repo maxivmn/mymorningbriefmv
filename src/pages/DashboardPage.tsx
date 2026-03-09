@@ -196,6 +196,12 @@ export default function DashboardPage() {
             </Card>
           </div>
         </div>
+
+        {/* Future sections — skeleton until backend delivers */}
+        <PerformanceAttribution />
+        <StrategySignals />
+        <WhatIfScenarios />
+        <Watchlist />
       </div>
     </ErrorBoundary>
   );
