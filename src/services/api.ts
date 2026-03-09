@@ -1,19 +1,23 @@
 // Central API service layer
-// Switch between mock data and real backend endpoints via settings
-// TODO: Replace mock implementations with actual API calls when backend is ready
+// Supports live mode (real backend) and mock mode (local mock data)
+// Uses exact API contract from API_CONTRACT.md
 
 import type {
-  PortfolioSummary, Holding, PortfolioSnapshot, AnnualSummaryRow,
-  ExposureRow, DailyDigest, NewsItem, DrawdownPoint, SecurityDetail, AppSettings,
+  PortfolioSummary, ValueHistoryResponse, HoldingsResponse, Holding,
+  TwrResponse, ModifiedDietzResponse, AnnualSummaryResponse, AnnualSummaryRow,
+  PositionReturnsResponse, ExposureResponse, ExposureRow, DrawdownResponse,
+  DailyDigestResponse, SecurityNewsResponse, ThemeNewsResponse, NewsItem,
+  AppSettings, HealthResponse,
 } from './types';
 import {
-  mockPortfolioSummary, mockHoldings, mockPortfolioHistory, mockAnnualSummary,
-  mockSectorExposure, mockCountryExposure, mockThemeExposure, mockStrategyExposure,
-  mockAssetClassExposure, mockDrawdown, mockDailyDigest, mockNewsItems, mockSecurityDetail,
+  mockPortfolioSummary, mockValueHistory, mockHoldings, mockTwr,
+  mockModifiedDietz, mockAnnualSummary, mockPositionReturns,
+  mockSectorExposure, mockThemeExposure, mockStrategyExposure, mockCountryExposure,
+  mockDrawdown, mockDailyDigest, mockSecurityNews, mockThemeNews,
 } from './mock-data';
 
 const DEFAULT_SETTINGS: AppSettings = {
-  apiBaseUrl: '',
+  apiBaseUrl: 'http://localhost:8000',
   useMockData: true,
   newsRefreshInterval: 30,
   morningDigestTime: '07:00',
@@ -42,131 +46,106 @@ function delay<T>(data: T, ms = 300): Promise<T> {
   return new Promise(resolve => setTimeout(() => resolve(data), ms));
 }
 
-// TODO: Implement real API calls when backend is connected
-// async function apiFetch<T>(path: string): Promise<T> {
-//   const { apiBaseUrl } = getSettings();
-//   const res = await fetch(`${apiBaseUrl}${path}`);
-//   if (!res.ok) throw new Error(`API error: ${res.status}`);
-//   return res.json();
-// }
-
-export async function getPortfolioSummary(): Promise<PortfolioSummary> {
-  // TODO: return apiFetch('/api/portfolio/summary');
-  return delay(mockPortfolioSummary);
-}
-
-export async function getLatestHoldings(): Promise<Holding[]> {
-  // TODO: return apiFetch('/api/holdings/latest');
-  return delay(mockHoldings);
-}
-
-export async function getPortfolioValueHistory(): Promise<PortfolioSnapshot[]> {
-  // TODO: return apiFetch('/api/portfolio/history');
-  return delay(mockPortfolioHistory);
-}
-
-export async function getTwr(): Promise<{ twr_pct: number }> {
-  // TODO: return apiFetch('/api/analytics/twr');
-  return delay({ twr_pct: mockPortfolioSummary.twr_pct });
-}
-
-export async function getModifiedDietz(): Promise<{ modified_dietz_pct: number }> {
-  // TODO: return apiFetch('/api/analytics/modified-dietz');
-  return delay({ modified_dietz_pct: mockPortfolioSummary.modified_dietz_pct });
-}
-
-export async function getAnnualSummary(): Promise<AnnualSummaryRow[]> {
-  // TODO: return apiFetch('/api/analytics/annual-summary');
-  return delay(mockAnnualSummary);
-}
-
-export async function getPositionReturns(): Promise<Holding[]> {
-  // TODO: return apiFetch('/api/analytics/position-returns');
-  return delay(mockHoldings);
-}
-
-export async function getExposureBySector(): Promise<ExposureRow[]> {
-  // TODO: return apiFetch('/api/exposure/sector');
-  return delay(mockSectorExposure);
-}
-
-export async function getExposureByTheme(): Promise<ExposureRow[]> {
-  // TODO: return apiFetch('/api/exposure/theme');
-  return delay(mockThemeExposure);
-}
-
-export async function getExposureByStrategy(): Promise<ExposureRow[]> {
-  // TODO: return apiFetch('/api/exposure/strategy');
-  return delay(mockStrategyExposure);
-}
-
-export async function getExposureByCountry(): Promise<ExposureRow[]> {
-  // TODO: return apiFetch('/api/exposure/country');
-  return delay(mockCountryExposure);
-}
-
-export async function getExposureByAssetClass(): Promise<ExposureRow[]> {
-  // TODO: return apiFetch('/api/exposure/asset-class');
-  return delay(mockAssetClassExposure);
-}
-
-export async function getDrawdown(): Promise<DrawdownPoint[]> {
-  // TODO: return apiFetch('/api/analytics/drawdown');
-  return delay(mockDrawdown);
-}
-
-export async function getDailyDigest(): Promise<DailyDigest> {
-  // TODO: return apiFetch('/api/news/digest');
-  return delay(mockDailyDigest);
-}
-
-export async function getNewsBySecurity(security?: string): Promise<NewsItem[]> {
-  // TODO: return apiFetch(`/api/news/by-security?security=${security}`);
-  const items = security
-    ? mockNewsItems.filter(n => n.security.toLowerCase().includes(security.toLowerCase()))
-    : mockNewsItems;
-  return delay(items);
-}
-
-export async function getNewsByTheme(theme?: string): Promise<NewsItem[]> {
-  // TODO: return apiFetch(`/api/news/by-theme?theme=${theme}`);
-  const items = theme
-    ? mockNewsItems.filter(n => n.theme.toLowerCase().includes(theme.toLowerCase()))
-    : mockNewsItems;
-  return delay(items);
-}
-
-export async function getAllNews(): Promise<NewsItem[]> {
-  // TODO: return apiFetch('/api/news/all');
-  return delay(mockNewsItems);
-}
-
-export async function getSecurityDetail(isin: string): Promise<SecurityDetail> {
-  // TODO: return apiFetch(`/api/security/${isin}`);
-  const holding = mockHoldings.find(h => h.isin === isin);
-  if (holding) {
-    return delay({
-      ...mockSecurityDetail,
-      isin: holding.isin,
-      display_name: holding.display_name,
-      quantity: holding.quantity,
-      current_value: holding.current_value,
-      portfolio_weight_pct: holding.portfolio_weight_pct,
-      unrealized_eur: holding.unrealized_eur,
-      unrealized_pct: holding.unrealized_pct,
-      sector: holding.sector,
-      country: holding.country,
-      primary_theme: holding.primary_theme,
-      strategy_bucket: holding.strategy_bucket,
-      asset_class: holding.asset_class,
+// Live API fetch
+async function apiFetch<T>(path: string, params?: Record<string, string>): Promise<T> {
+  const { apiBaseUrl } = getSettings();
+  const url = new URL(path, apiBaseUrl);
+  if (params) {
+    Object.entries(params).forEach(([k, v]) => {
+      if (v !== undefined && v !== '') url.searchParams.set(k, v);
     });
   }
-  return delay(mockSecurityDetail);
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error(`API error: ${res.status} ${res.statusText}`);
+  return res.json();
 }
 
-export async function getSecurityNews(isin: string): Promise<NewsItem[]> {
-  // TODO: return apiFetch(`/api/security/${isin}/news`);
-  const detail = mockHoldings.find(h => h.isin === isin);
-  if (!detail) return delay([]);
-  return delay(mockNewsItems.filter(n => n.security === detail.display_name));
+function isMock(): boolean {
+  return getSettings().useMockData;
+}
+
+// --- API functions ---
+
+export async function checkHealth(): Promise<HealthResponse> {
+  return apiFetch('/api/health');
+}
+
+export async function getPortfolioSummary(): Promise<PortfolioSummary> {
+  if (isMock()) return delay(mockPortfolioSummary);
+  return apiFetch('/api/portfolio/summary');
+}
+
+export async function getPortfolioValueHistory(): Promise<ValueHistoryResponse> {
+  if (isMock()) return delay(mockValueHistory);
+  return apiFetch('/api/portfolio/value-history');
+}
+
+export async function getLatestHoldings(): Promise<HoldingsResponse> {
+  if (isMock()) return delay(mockHoldings);
+  return apiFetch('/api/holdings/latest');
+}
+
+export async function getTwr(): Promise<TwrResponse> {
+  if (isMock()) return delay(mockTwr);
+  return apiFetch('/api/performance/twr');
+}
+
+export async function getModifiedDietz(startDate?: string, endDate?: string): Promise<ModifiedDietzResponse> {
+  if (isMock()) return delay(mockModifiedDietz);
+  const params: Record<string, string> = {};
+  if (startDate) params.start_date = startDate;
+  if (endDate) params.end_date = endDate;
+  return apiFetch('/api/performance/modified-dietz', params);
+}
+
+export async function getAnnualSummary(): Promise<AnnualSummaryResponse> {
+  if (isMock()) return delay(mockAnnualSummary);
+  return apiFetch('/api/performance/annual-summary');
+}
+
+export async function getPositionReturns(): Promise<PositionReturnsResponse> {
+  if (isMock()) return delay(mockPositionReturns);
+  return apiFetch('/api/performance/position-returns');
+}
+
+export async function getExposureBySector(): Promise<ExposureResponse> {
+  if (isMock()) return delay(mockSectorExposure);
+  return apiFetch('/api/exposure/sector/latest');
+}
+
+export async function getExposureByTheme(): Promise<ExposureResponse> {
+  if (isMock()) return delay(mockThemeExposure);
+  return apiFetch('/api/exposure/theme/latest');
+}
+
+export async function getExposureByStrategy(): Promise<ExposureResponse> {
+  if (isMock()) return delay(mockStrategyExposure);
+  return apiFetch('/api/exposure/strategy/latest');
+}
+
+export async function getExposureByCountry(): Promise<ExposureResponse> {
+  if (isMock()) return delay(mockCountryExposure);
+  return apiFetch('/api/exposure/country/latest');
+}
+
+export async function getDrawdown(): Promise<DrawdownResponse> {
+  if (isMock()) return delay(mockDrawdown);
+  return apiFetch('/api/risk/drawdown');
+}
+
+export async function getDailyDigest(date?: string): Promise<DailyDigestResponse> {
+  if (isMock()) return delay(mockDailyDigest);
+  const params: Record<string, string> = {};
+  if (date) params.date = date;
+  return apiFetch('/api/news/daily-digest', params);
+}
+
+export async function getNewsBySecurity(isin: string): Promise<SecurityNewsResponse> {
+  if (isMock()) return delay({ ...mockSecurityNews, isin, display_name: isin });
+  return apiFetch('/api/news/by-security', { isin });
+}
+
+export async function getNewsByTheme(theme: string): Promise<ThemeNewsResponse> {
+  if (isMock()) return delay({ ...mockThemeNews, theme });
+  return apiFetch('/api/news/by-theme', { theme });
 }
