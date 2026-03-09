@@ -19,6 +19,13 @@ import { ExposureDrift } from '@/components/dashboard/ExposureDrift';
 import { ThemeOverview } from '@/components/dashboard/ThemeOverview';
 import { RiskConcentration } from '@/components/dashboard/RiskConcentration';
 import { PerformanceContribution } from '@/components/dashboard/PerformanceContribution';
+import { MorningBriefing } from '@/components/dashboard/MorningBriefing';
+import { MarketPulse } from '@/components/dashboard/MarketPulse';
+import { PerformanceAttribution } from '@/components/dashboard/PerformanceAttribution';
+import { StrategySignals } from '@/components/dashboard/StrategySignals';
+import { WhatIfScenarios } from '@/components/dashboard/WhatIfScenarios';
+import { Watchlist } from '@/components/dashboard/Watchlist';
+import { ResearchNotesButton } from '@/components/dashboard/ResearchNotesPanel';
 
 export default function DashboardPage() {
   const { data: summary, isLoading: loadingSummary } = useQuery({ queryKey: ['portfolio-summary'], queryFn: getPortfolioSummary });
