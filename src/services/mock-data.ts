@@ -207,8 +207,16 @@ export const mockSecurityNews: SecurityNewsResponse = {
   note: "Placeholder — live news feed not yet connected.",
 };
 
+export const mockThemeNews: ThemeNewsResponse = {
+  theme: "placeholder",
+  items: [
+    { id: "placeholder-1", headline: "Live news feed not yet connected", summary: "This endpoint is ready for integration with a news data source.", sentiment: "neutral", source: "system", published_at: "2026-03-07T08:00:00.000000Z", category: "system", ticker_symbol: null, relevance_score: null },
+  ],
+  total: 1,
+  note: "Placeholder — live news feed not yet connected.",
+};
 
-export const mockMovers: MoversResponse = {
+
   periods: [
     {
       label: "Since last snapshot", days: 1,
