@@ -152,17 +152,14 @@ export default function DashboardPage() {
                 {loadingHoldings ? (
                   <div className="space-y-2">{[1, 2, 3, 4, 5].map(i => <div key={i} className="h-8 bg-muted animate-pulse rounded" />)}</div>
                 ) : topHoldings.map(h => (
-                  <Link
-                    key={h.isin}
-                    to={`/security/${h.isin}`}
-                    className="flex items-center justify-between rounded-md px-2 py-1.5 text-sm hover:bg-muted/50 transition-colors"
-                  >
-                    <span className="font-medium">{h.display_name}</span>
+                  <div key={h.isin} className="flex items-center justify-between rounded-md px-2 py-1.5 text-sm hover:bg-muted/50 transition-colors">
+                    <Link to={`/security/${h.isin}`} className="font-medium hover:underline">{h.display_name}</Link>
                     <div className="flex items-center gap-2">
                       <span className="text-[11px] text-muted-foreground">€{h.position_value_eur.toLocaleString()}</span>
                       <span className="font-mono text-xs w-12 text-right">{h.pct_of_portfolio?.toFixed(1)}%</span>
+                      <ResearchNotesButton isin={h.isin} displayName={h.display_name} />
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </CardContent>
             </Card>
