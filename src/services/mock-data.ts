@@ -216,7 +216,7 @@ export const mockThemeNews: ThemeNewsResponse = {
   note: "Placeholder — live news feed not yet connected.",
 };
 
-
+export const mockMovers: MoversResponse = {
   periods: [
     {
       label: "Since last snapshot", days: 1,
