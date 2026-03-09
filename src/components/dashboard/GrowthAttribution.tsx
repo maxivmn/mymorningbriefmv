@@ -20,7 +20,7 @@ export function GrowthAttribution() {
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={320}>
-            <ComposedChart data={data.series}>
+            <ComposedChart data={data.series.map(p => ({ ...p, snapshot_date: new Date(p.snapshot_date).getTime() }))}>
               <defs>
                 <linearGradient id="capitalGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.7} />
